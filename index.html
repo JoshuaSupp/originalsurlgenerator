@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exagaming URL Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f1117;
+            color: #e4e4e7;
+            min-height: 100vh;
+            padding: 24px;
+        }
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: #fff;
+        }
+        .card {
+            background: #1a1b23;
+            border: 1px solid #2a2b35;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #a1a1aa;
+        }
+        select, input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px 12px;
+            background: #0f1117;
+            border: 1px solid #2a2b35;
+            border-radius: 8px;
+            color: #e4e4e7;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        select:focus, input:focus {
+            border-color: #3b82f6;
+        }
+        .row {
+            display: flex;
+            gap: 12px;
+        }
+        .row .form-group {
+            flex: 1;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        button:hover {
+            opacity: 0.85;
+        }
+        .btn-primary {
+            background: #3b82f6;
+            color: #fff;
+        }
+        .btn-secondary {
+            background: #27272a;
+            color: #e4e4e7;
+            border: 1px solid #3f3f46;
+        }
+        .btn-fetch {
+            background: #16a34a;
+            color: #fff;
+        }
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .url-output {
+            background: #0f1117;
+            border: 1px solid #2a2b35;
+            border-radius: 8px;
+            padding: 14px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            word-break: break-all;
+            color: #4ade80;
+            min-height: 48px;
+            line-height: 1.5;
+        }
+        .url-output.empty {
+            color: #71717a;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .status {
+            font-size: 13px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 10px;
+            display: none;
+        }
+        .status.success {
+            display: block;
+            background: rgba(22, 163, 74, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(22, 163, 74, 0.3);
+        }
+        .status.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .status.loading {
+            display: block;
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .checkbox-row input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #3b82f6;
+        }
+        .checkbox-row label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Exagaming URL Generator</h1>
+
+        <div class="card">
+            <div class="row">
+                <div class="form-group">
+                    <label>Environment</label>
+                    <select id="env">
+                        <option value="test">Test</option>
+                        <option value="stage">Stage</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Game ID</label>
+                    <select id="gameId">
+                        <option value="1">1 - Aztec_Man</option>
+                        <option value="2">2 - FOLLOWTHEARROW</option>
+                        <option value="3">3 - GALAXY_GRAB</option>
+                        <option value="4">4 - POWEROFTHOR</option>
+                        <option value="30">30 - Plinko</option>
+                        <option value="32">32 - Mines</option>
+                        <option value="33">33 - Blackjack</option>
+                        <option value="34" selected>34 - Wheel</option>
+                        <option value="54">54 - Aviator Turbo</option>
+                        <option value="55">55 - Tower</option>
+                        <option value="56">56 - Limbo</option>
+                        <option value="57">57 - Dice</option>
+                        <option value="58">58 - Keno</option>
+                        <option value="70">70 - Crash</option>
+                        <option value="71">71 - Roulette</option>
+                        <option value="76">76 - Billionaire</option>
+                        <option value="95">95 - Coinflip</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label>Currency</label>
+                    <select id="currency">
+                        <option value="TRY" selected>TRY</option>
+                        <option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="BRL">BRL</option>
+                        <option value="INR">INR</option>
+                        <option value="JPY">JPY</option>
+                        <option value="GBP">GBP</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Language</label>
+                    <select id="lang">
+                        <option value="en" selected>English (en)</option>
+                        <option value="tr">Turkish (tr)</option>
+                        <option value="fr">French (fr)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label>Operator</label>
+                    <input type="text" id="operator" value="1000" placeholder="e.g. 1000">
+                </div>
+                <div class="form-group">
+                    <label>Theme Operator (optional)</label>
+                    <select id="themeoperator">
+                        <option value="">None</option>
+                        <option value="48">48 - bettist</option>
+                        <option value="10097">10097 - radabet</option>
+                        <option value="10098">10098 - eurovirtual</option>
+                        <option value="10100">10100 - crickso</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="form-group">
+                <label>Username (for token)</label>
+                <input type="text" id="username" value="Newwuse3221r222222w223w3" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <label>Token</label>
+                <input type="password" id="token" placeholder="Click 'Fetch Token' to generate">
+                <div class="btn-row">
+                    <button class="btn-fetch" id="fetchToken">Fetch Token</button>
+                    <button class="btn-secondary" id="clearToken">Clear</button>
+                </div>
+            </div>
+            <div class="status" id="tokenStatus"></div>
+        </div>
+
+        <div class="card">
+            <label>Generated URL</label>
+            <div class="url-output empty" id="urlOutput">Fill in the fields and click "Generate URL"</div>
+            <div class="actions">
+                <button class="btn-primary" id="generateBtn">Generate URL</button>
+                <button class="btn-secondary" id="copyBtn">Copy URL</button>
+                <button class="btn-secondary" id="openBtn">Open URL</button>
+            </div>
+            <div class="status" id="urlStatus"></div>
+        </div>
+    </div>
+
+    <script>
+        const GAMES = [
+            { id: "1", name: "Aztec_Man" },
+            { id: "2", name: "FOLLOWTHEARROW" },
+            { id: "3", name: "GALAXY_GRAB" },
+            { id: "4", name: "POWEROFTHOR" },
+            { id: "30", name: "plinko" },
+            { id: "32", name: "mines" },
+            { id: "33", name: "blackjack" },
+            { id: "34", name: "wheel" },
+            { id: "54", name: "aviatorturbo" },
+            { id: "55", name: "tower" },
+            { id: "56", name: "limbo" },
+            { id: "57", name: "dice" },
+            { id: "58", name: "keno" },
+            { id: "70", name: "crash" },
+            { id: "71", name: "roulette" },
+            { id: "76", name: "billionaire" },
+            { id: "95", name: "coinflip" },
+        ];
+
+        const OPERATORS = [
+            { id: "48", name: "bettist" },
+            { id: "10097", name: "radabet" },
+            { id: "10098", name: "eurovirtual" },
+            { id: "10100", name: "crickso" },
+        ];
+
+        function showStatus(id, message, type) {
+            const el = document.getElementById(id);
+            el.textContent = message;
+            el.className = 'status ' + type;
+        }
+
+        function hideStatus(id) {
+            const el = document.getElementById(id);
+            el.className = 'status';
+            el.textContent = '';
+        }
+
+        document.getElementById('fetchToken').addEventListener('click', async () => {
+            const username = document.getElementById('username').value.trim();
+            const currencyCode = document.getElementById('currency').value;
+            const lang = document.getElementById('lang').value;
+
+            if (!username) {
+                showStatus('tokenStatus', 'Please enter a username', 'error');
+                return;
+            }
+
+            showStatus('tokenStatus', 'Fetching token...', 'loading');
+
+            try {
+                const response = await fetch('https://casino.playboo.io/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        currencyCode: currencyCode,
+                        lang: lang,
+                    }),
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
+                const data = await response.json();
+                const token = data.token || data.accessToken || data.jwt || data.access_token;
+
+                if (!token) {
+                    console.log('Login response:', data);
+                    throw new Error('No token field found in response. Check console for full response.');
+                }
+
+                document.getElementById('token').value = token;
+                showStatus('tokenStatus', 'Token fetched successfully!', 'success');
+            } catch (error) {
+                console.error('Token fetch error:', error);
+                showStatus('tokenStatus', 'Error: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('clearToken').addEventListener('click', () => {
+            document.getElementById('token').value = '';
+            hideStatus('tokenStatus');
+        });
+
+        document.getElementById('generateBtn').addEventListener('click', () => {
+            const env = document.getElementById('env').value;
+            const gameId = document.getElementById('gameId').value;
+            const currency = document.getElementById('currency').value;
+            const lang = document.getElementById('lang').value;
+            const operator = document.getElementById('operator').value.trim();
+            const themeoperator = document.getElementById('themeoperator').value;
+            const token = document.getElementById('token').value.trim();
+
+            if (!token) {
+                showStatus('urlStatus', 'Please fetch or enter a token first', 'error');
+                return;
+            }
+
+            const FAST_GAME_IDS = ['1', '2', '3', '4', '54'];
+            const isFastGame = FAST_GAME_IDS.includes(gameId);
+
+            let baseUrl;
+            if (isFastGame) {
+                baseUrl = `https://game.exagaming.com/fast/${env}/panel/${gameId}/index.html`;
+            } else {
+                baseUrl = `https://game.exagaming.com/originals/${env}/panel/index.html`;
+            }
+
+            const params = new URLSearchParams();
+
+            params.set('gameId', gameId);
+            params.set('currency', currency);
+            params.set('operator', operator);
+            params.set('token', token);
+            params.set('lang', lang);
+
+            if (themeoperator && !isFastGame) {
+                params.set('themeoperator', themeoperator);
+            }
+
+            const url = `${baseUrl}?${params.toString()}`;
+            const output = document.getElementById('urlOutput');
+            output.textContent = url;
+            output.classList.remove('empty');
+
+            hideStatus('urlStatus');
+        });
+
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            const output = document.getElementById('urlOutput');
+            if (output.classList.contains('empty')) {
+                showStatus('urlStatus', 'Generate a URL first', 'error');
+                return;
+            }
+            navigator.clipboard.writeText(output.textContent).then(() => {
+                showStatus('urlStatus', 'URL copied to clipboard!', 'success');
+                setTimeout(() => hideStatus('urlStatus'), 2000);
+            }).catch(() => {
+                showStatus('urlStatus', 'Failed to copy', 'error');
+            });
+        });
+
+        document.getElementById('openBtn').addEventListener('click', () => {
+            const output = document.getElementById('urlOutput');
+            if (output.classList.contains('empty')) {
+                showStatus('urlStatus', 'Generate a URL first', 'error');
+                return;
+            }
+            window.open(output.textContent, '_blank');
+        });
+    </script>
+</body>
+</html>
