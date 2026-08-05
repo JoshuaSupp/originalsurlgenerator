@@ -384,8 +384,6 @@
             }
 
             const params = new URLSearchParams();
-
-            // Standalone fast games derive the game from the path, so no gameId param.
             if (!isStandaloneFastGame) {
                 params.set('gameId', gameId);
             }
@@ -394,7 +392,7 @@
             params.set('token', token);
             params.set('lang', lang);
 
-            if (themeoperator) {
+            if (themeoperator && gameId === '54') {
                 params.set('themeoperator', themeoperator);
             }
 
