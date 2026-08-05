@@ -187,6 +187,7 @@
                         <option value="70">70 - Crash</option>
                         <option value="71">71 - Roulette</option>
                         <option value="76">76 - Billionaire</option>
+                        <option value="89">89 - Run Chicken Run</option>
                         <option value="95">95 - Coinflip</option>
                     </select>
                 </div>
@@ -279,6 +280,7 @@
             { id: "70", name: "crash" },
             { id: "71", name: "roulette" },
             { id: "76", name: "billionaire" },
+            { id: "89", name: "runchickenrun" },
             { id: "95", name: "coinflip" },
         ];
 
@@ -367,11 +369,15 @@
                 return;
             }
 
-            const FAST_GAME_IDS = ['1', '2', '3', '4', '54'];
-            const isFastGame = FAST_GAME_IDS.includes(gameId);
+            const FAST_PANEL_GAME_IDS = ['1', '2', '3', '4', '54'];
+            const STANDALONE_FAST_GAME_IDS = ['89'];
+            const isFastPanelGame = FAST_PANEL_GAME_IDS.includes(gameId);
+            const isStandaloneFastGame = STANDALONE_FAST_GAME_IDS.includes(gameId);
 
             let baseUrl;
-            if (isFastGame) {
+            if (isStandaloneFastGame) {
+                baseUrl = `https://game.exagaming.com/fast/${env}/${gameId}/index.html`;
+            } else if (isFastPanelGame) {
                 baseUrl = `https://game.exagaming.com/fast/${env}/panel/${gameId}/index.html`;
             } else {
                 baseUrl = `https://game.exagaming.com/originals/${env}/panel/index.html`;
@@ -379,13 +385,16 @@
 
             const params = new URLSearchParams();
 
-            params.set('gameId', gameId);
+            // Standalone fast games derive the game from the path, so no gameId param.
+            if (!isStandaloneFastGame) {
+                params.set('gameId', gameId);
+            }
             params.set('currency', currency);
             params.set('operator', operator);
             params.set('token', token);
             params.set('lang', lang);
 
-            if (themeoperator && !isFastGame) {
+            if (themeoperator) {
                 params.set('themeoperator', themeoperator);
             }
 
