@@ -239,20 +239,12 @@
                 <label>Username (for token)</label>
                 <input type="text" id="username" placeholder="Enter username">
             </div>
-            <div class="form-group">
-                <label>Token</label>
-                <input type="password" id="token" placeholder="Click 'Fetch Token' to generate">
-                <div class="btn-row">
-                    <button class="btn-fetch" id="fetchToken">Fetch Token</button>
-                    <button class="btn-secondary" id="clearToken">Clear</button>
-                </div>
-            </div>
             <div class="status" id="tokenStatus"></div>
         </div>
 
         <div class="card">
             <label>Generated URL</label>
-            <div class="url-output empty" id="urlOutput">Fill in the fields and click "Generate URL"</div>
+            <div class="url-output empty" id="urlOutput">Enter username and click "Generate URL"</div>
             <div class="actions">
                 <button class="btn-primary" id="generateBtn">Generate URL</button>
                 <button class="btn-secondary" id="copyBtn">Copy URL</button>
@@ -303,17 +295,23 @@
             el.textContent = '';
         }
 
-        document.getElementById('fetchToken').addEventListener('click', async () => {
+        document.getElementById('generateBtn').addEventListener('click', async () => {
             const username = document.getElementById('username').value.trim();
-            const currencyCode = document.getElementById('currency').value;
+            const env = document.getElementById('env').value;
+            const gameId = document.getElementById('gameId').value;
+            const currency = document.getElementById('currency').value;
             const lang = document.getElementById('lang').value;
+            const operator = document.getElementById('operator').value.trim();
+            const themeoperator = document.getElementById('themeoperator').value;
 
             if (!username) {
                 showStatus('tokenStatus', 'Please enter a username', 'error');
+                hideStatus('urlStatus');
                 return;
             }
 
             showStatus('tokenStatus', 'Fetching token...', 'loading');
+            hideStatus('urlStatus');
 
             try {
                 const response = await fetch('https://casino.playboo.io/login', {
@@ -323,7 +321,7 @@
                     },
                     body: JSON.stringify({
                         username: username,
-                        currencyCode: currencyCode,
+                        currencyCode: currency,
                         lang: lang,
                     }),
                 });
@@ -341,67 +339,49 @@
                     throw new Error('No token field found in response. Check console for full response.');
                 }
 
-                document.getElementById('token').value = token;
                 showStatus('tokenStatus', 'Token fetched successfully!', 'success');
-                document.getElementById('generateBtn').click();
+
+                const FAST_PANEL_GAME_IDS = ['1', '2', '3', '4', '54'];
+                const STANDALONE_FAST_GAME_IDS = ['89'];
+                const STANDALONE_ORIGINALS_GAME_IDS = ['95'];
+                const isFastPanelGame = FAST_PANEL_GAME_IDS.includes(gameId);
+                const isStandaloneFastGame = STANDALONE_FAST_GAME_IDS.includes(gameId);
+                const isStandaloneOriginalsGame = STANDALONE_ORIGINALS_GAME_IDS.includes(gameId);
+
+                let baseUrl;
+                if (isStandaloneFastGame) {
+                    baseUrl = `https://game.exagaming.com/fast/${env}/${gameId}/index.html`;
+                } else if (isStandaloneOriginalsGame) {
+                    baseUrl = `https://game.exagaming.com/originals/${env}/${gameId}/index.html`;
+                } else if (isFastPanelGame) {
+                    baseUrl = `https://game.exagaming.com/fast/${env}/panel/${gameId}/index.html`;
+                } else {
+                    baseUrl = `https://game.exagaming.com/originals/${env}/panel/index.html`;
+                }
+
+                const params = new URLSearchParams();
+                if (!isStandaloneFastGame) {
+                    params.set('gameId', gameId);
+                }
+                params.set('currency', currency);
+                params.set('operator', operator);
+                params.set('token', token);
+                params.set('lang', lang);
+
+                if (themeoperator) {
+                    params.set('themeoperator', themeoperator);
+                }
+
+                const url = `${baseUrl}?${params.toString()}`;
+                const output = document.getElementById('urlOutput');
+                output.textContent = url;
+                output.classList.remove('empty');
+
+                hideStatus('urlStatus');
             } catch (error) {
                 console.error('Token fetch error:', error);
                 showStatus('tokenStatus', 'Error: ' + error.message, 'error');
             }
-        });
-
-        document.getElementById('clearToken').addEventListener('click', () => {
-            document.getElementById('token').value = '';
-            hideStatus('tokenStatus');
-        });
-
-        document.getElementById('generateBtn').addEventListener('click', () => {
-            const env = document.getElementById('env').value;
-            const gameId = document.getElementById('gameId').value;
-            const currency = document.getElementById('currency').value;
-            const lang = document.getElementById('lang').value;
-            const operator = document.getElementById('operator').value.trim();
-            const themeoperator = document.getElementById('themeoperator').value;
-            const token = document.getElementById('token').value.trim();
-
-            if (!token) {
-                showStatus('urlStatus', 'Please fetch or enter a token first', 'error');
-                return;
-            }
-
-            const FAST_PANEL_GAME_IDS = ['1', '2', '3', '4', '54'];
-            const STANDALONE_FAST_GAME_IDS = ['89'];
-            const isFastPanelGame = FAST_PANEL_GAME_IDS.includes(gameId);
-            const isStandaloneFastGame = STANDALONE_FAST_GAME_IDS.includes(gameId);
-
-            let baseUrl;
-            if (isStandaloneFastGame) {
-                baseUrl = `https://game.exagaming.com/fast/${env}/${gameId}/index.html`;
-            } else if (isFastPanelGame) {
-                baseUrl = `https://game.exagaming.com/fast/${env}/panel/${gameId}/index.html`;
-            } else {
-                baseUrl = `https://game.exagaming.com/originals/${env}/panel/index.html`;
-            }
-
-            const params = new URLSearchParams();
-            if (!isStandaloneFastGame) {
-                params.set('gameId', gameId);
-            }
-            params.set('currency', currency);
-            params.set('operator', operator);
-            params.set('token', token);
-            params.set('lang', lang);
-
-            if (themeoperator) {
-                params.set('themeoperator', themeoperator);
-            }
-
-            const url = `${baseUrl}?${params.toString()}`;
-            const output = document.getElementById('urlOutput');
-            output.textContent = url;
-            output.classList.remove('empty');
-
-            hideStatus('urlStatus');
         });
 
         document.getElementById('copyBtn').addEventListener('click', () => {
