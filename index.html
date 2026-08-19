@@ -423,6 +423,8 @@
                 if (userCode) {
                     usercodeValue.textContent = userCode;
                     usercodeDisplay.classList.add('show');
+                    const balanceUserIdInput = document.getElementById('balanceUserId');
+                    if (balanceUserIdInput) balanceUserIdInput.value = userCode;
                 } else {
                     usercodeValue.textContent = '-';
                     usercodeDisplay.classList.remove('show');
