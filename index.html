@@ -237,6 +237,7 @@
                         <option value="71">71 - Roulette</option>
                         <option value="76">76 - Billionaire</option>
                         <option value="89">89 - Run Chicken Run</option>
+                        <option value="90">90 - Chicken Original</option>
                         <option value="95">95 - Coinflip</option>
                     </select>
                 </div>
@@ -253,6 +254,7 @@
                         <option value="INR">INR</option>
                         <option value="JPY">JPY</option>
                         <option value="GBP">GBP</option>
+                        <option value="MYR">MYR</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -349,6 +351,7 @@
             { id: "71", name: "roulette" },
             { id: "76", name: "billionaire" },
             { id: "89", name: "runchickenrun" },
+            { id: "90", name: "chickenoriginal" },
             { id: "95", name: "coinflip" },
         ];
 
@@ -431,7 +434,7 @@
                 }
 
                 const FAST_PANEL_GAME_IDS = ['1', '2', '3', '4', '54'];
-                const STANDALONE_FAST_GAME_IDS = ['89'];
+                const STANDALONE_FAST_GAME_IDS = ['89', '90'];
                 const STANDALONE_ORIGINALS_GAME_IDS = ['30', '33', '95'];
                 const isFastPanelGame = FAST_PANEL_GAME_IDS.includes(gameId);
                 const isStandaloneFastGame = STANDALONE_FAST_GAME_IDS.includes(gameId);
