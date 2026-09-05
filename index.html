@@ -240,6 +240,10 @@
                         <option value="90">90 - Chicken Original</option>
                         <option value="93">93 - Blackjack 100</option>
                         <option value="95">95 - Coinflip</option>
+                        <option value="100">100 - Lucky Dice (Dice)</option>
+                        <option value="101">101 - Lucky Crash (Crash)</option>
+                        <option value="102">102 - Roulette X (Roulette)</option>
+                        <option value="103">103 - Spin X (Wheel)</option>
                     </select>
                 </div>
             </div>
@@ -356,7 +360,19 @@
             { id: "90", name: "chickenoriginal" },
             { id: "93", name: "blackjack100" },
             { id: "95", name: "coinflip" },
+            { id: "100", name: "lucky_dice", realGameId: "57" },
+            { id: "101", name: "lucky_crash", realGameId: "70" },
+            { id: "102", name: "roulette_x", realGameId: "71" },
+            { id: "103", name: "spin_x", realGameId: "34" },
         ];
+
+        // Map operator-specific game IDs to their real game IDs
+        const OPERATOR_SPECIFIC_GAME_MAP = {
+            "100": "57",  // Lucky Dice -> Dice
+            "101": "70",  // Lucky Crash -> Crash
+            "102": "71",  // Roulette X -> Roulette
+            "103": "34",  // Spin X -> Wheel
+        };
 
         const OPERATORS = [
             { id: "48", name: "bettist" },
@@ -439,24 +455,34 @@
                 const FAST_PANEL_GAME_IDS = ['1', '2', '3', '4', '54'];
                 const STANDALONE_FAST_GAME_IDS = ['89', '90'];
                 const STANDALONE_ORIGINALS_GAME_IDS = ['30', '33', '90', '93', '95'];
-                const isFastPanelGame = FAST_PANEL_GAME_IDS.includes(gameId);
-                const isStandaloneFastGame = STANDALONE_FAST_GAME_IDS.includes(gameId);
-                const isStandaloneOriginalsGame = STANDALONE_ORIGINALS_GAME_IDS.includes(gameId);
+
+                // Check if this is an operator-specific game
+                const operatorSpecificGameId = OPERATOR_SPECIFIC_GAME_MAP[gameId] ? gameId : null;
+                // Use the real game ID for panel routing and config
+                const effectiveGameId = operatorSpecificGameId ? OPERATOR_SPECIFIC_GAME_MAP[gameId] : gameId;
+
+                const isFastPanelGame = FAST_PANEL_GAME_IDS.includes(effectiveGameId);
+                const isStandaloneFastGame = STANDALONE_FAST_GAME_IDS.includes(effectiveGameId);
+                const isStandaloneOriginalsGame = STANDALONE_ORIGINALS_GAME_IDS.includes(effectiveGameId);
 
                 let baseUrl;
                 if (isStandaloneFastGame) {
-                    baseUrl = `https://game.exagaming.com/fast/${env}/${gameId}/index.html`;
+                    baseUrl = `https://game.exagaming.com/fast/${env}/${effectiveGameId}/index.html`;
                 } else if (isStandaloneOriginalsGame) {
-                    baseUrl = `https://game.exagaming.com/originals/${env}/${gameId}/index.html`;
+                    baseUrl = `https://game.exagaming.com/originals/${env}/${effectiveGameId}/index.html`;
                 } else if (isFastPanelGame) {
-                    baseUrl = `https://game.exagaming.com/fast/${env}/panel/${gameId}/index.html`;
+                    baseUrl = `https://game.exagaming.com/fast/${env}/panel/${effectiveGameId}/index.html`;
                 } else {
                     baseUrl = `https://game.exagaming.com/originals/${env}/panel/index.html`;
                 }
 
                 const params = new URLSearchParams();
                 if (!isStandaloneFastGame) {
-                    params.set('gameId', gameId);
+                    params.set('gameId', effectiveGameId);
+                }
+                // Add operatorSpecificGameId for operator-specific games (used only for login)
+                if (operatorSpecificGameId) {
+                    params.set('operatorSpecificGameId', operatorSpecificGameId);
                 }
                 params.set('currency', currency);
                 params.set('operator', operator);
