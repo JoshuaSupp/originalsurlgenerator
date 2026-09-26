@@ -76,6 +76,10 @@
         button:hover {
             opacity: 0.85;
         }
+        button:disabled, select:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
         .btn-primary {
             background: #3b82f6;
             color: #fff;
@@ -246,6 +250,16 @@
                         <option value="101">101 - Lucky Crash (Crash)</option>
                         <option value="102">102 - Roulette X (Roulette)</option>
                         <option value="103">103 - Spin X (Wheel)</option>
+                        <optgroup label="New Games (Test only)">
+                            <option value="new_mines">New Mines</option>
+                            <option value="new_tower">New Tower</option>
+                            <option value="new_dice">New Dice</option>
+                            <option value="new_crash">New Crash</option>
+                            <option value="new_limbo">New Limbo</option>
+                            <option value="new_keno">New Keno</option>
+                            <option value="new_wheel">New Wheel</option>
+                            <option value="new_roulette">New Roulette</option>
+                        </optgroup>
                     </select>
                 </div>
             </div>
@@ -385,6 +399,28 @@
             "103": "34",  // Spin X -> Wheel
         };
 
+        // New games: test env only, served from /originals/test/{slug}/index.html
+        const NEW_GAMES = {
+            new_mines: { slug: "mines", gameId: "32" },
+            new_tower: { slug: "tower", gameId: "55" },
+            new_dice: { slug: "dice", gameId: "57" },
+            new_crash: { slug: "crash", gameId: "70" },
+            new_limbo: { slug: "limbo", gameId: "56" },
+            new_keno: { slug: "keno", gameId: "58" },
+            new_wheel: { slug: "wheel", gameId: "34" },
+            new_roulette: { slug: "roulette", gameId: "71" },
+        };
+
+        function syncNewGameState() {
+            const isNewGame = !!NEW_GAMES[document.getElementById('gameId').value];
+            const envSelect = document.getElementById('env');
+            if (isNewGame) envSelect.value = 'test';
+            envSelect.disabled = isNewGame;
+            document.getElementById('launchApiBtn').disabled = isNewGame;
+        }
+        document.getElementById('gameId').addEventListener('change', syncNewGameState);
+        syncNewGameState();
+
         const OPERATORS = [
             { id: "48", name: "bettist" },
             { id: "10097", name: "radabet" },
@@ -463,6 +499,24 @@
                     usercodeDisplay.classList.remove('show');
                 }
 
+                const newGame = NEW_GAMES[gameId];
+                if (newGame) {
+                    const newParams = new URLSearchParams();
+                    newParams.set('gameId', newGame.gameId);
+                    newParams.set('currency', currency);
+                    newParams.set('operator', operator);
+                    newParams.set('token', token);
+                    newParams.set('lang', lang);
+                    if (themeoperator) {
+                        newParams.set('themeoperator', themeoperator);
+                    }
+                    const output = document.getElementById('urlOutput');
+                    output.textContent = `https://game.exagaming.com/originals/test/${newGame.slug}/index.html?${newParams.toString()}`;
+                    output.classList.remove('empty');
+                    hideStatus('urlStatus');
+                    return;
+                }
+
                 const FAST_PANEL_GAME_IDS = ['1', '2', '3', '4', '54'];
                 const STANDALONE_FAST_GAME_IDS = ['89', '90'];
                 const STANDALONE_ORIGINALS_GAME_IDS = ['30', '33', '90', '93', '95', '96'];
@@ -532,6 +586,11 @@
             const operator = document.getElementById('operator').value.trim();
             const themeoperator = document.getElementById('themeoperator').value;
             const isDemo = document.getElementById('isDemo').checked;
+
+            if (NEW_GAMES[gameId]) {
+                showStatus('urlStatus', 'Launch URL is not available for new games. Use "Generate URL".', 'error');
+                return;
+            }
 
             if (!username) {
                 showStatus('tokenStatus', 'Please enter a username', 'error');
