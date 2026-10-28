@@ -397,7 +397,7 @@
             "103": "34",  // Spin X -> Wheel
         };
 
-        // New games: test env only, served from /originals/test/{slug}/index.html
+        // New games: served from /originals/{env}/{slug}/index.html
         const NEW_GAMES = {
             new_mines: { slug: "32", gameId: "32" },
             new_tower: { slug: "55", gameId: "55" },
@@ -412,9 +412,6 @@
         function syncNewGameState() {
             const isNewGame = !!NEW_GAMES[document.getElementById('gameId').value];
             const envSelect = document.getElementById('env');
-            if (isNewGame) envSelect.value = 'test';
-            envSelect.disabled = isNewGame;
-            document.getElementById('launchApiBtn').disabled = isNewGame;
         }
         document.getElementById('gameId').addEventListener('change', syncNewGameState);
         syncNewGameState();
@@ -509,7 +506,7 @@
                         newParams.set('themeoperator', themeoperator);
                     }
                     const output = document.getElementById('urlOutput');
-                    output.textContent = `https://game.exagaming.com/originals/test/${newGame.slug}/index.html?${newParams.toString()}`;
+                    output.textContent = `https://game.exagaming.com/originals/${env}/${newGame.slug}/index.html?${newParams.toString()}`;
                     output.classList.remove('empty');
                     hideStatus('urlStatus');
                     return;
