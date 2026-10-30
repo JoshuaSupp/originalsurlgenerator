@@ -257,6 +257,11 @@
                             <option value="new_keno">New Keno</option>
                             <option value="new_wheel">New Wheel</option>
                             <option value="new_roulette">New Roulette</option>
+                            <option value="new_aztecman">New Aztec Man</option>
+                            <option value="new_followthearrow">New Follow the arrow</option>
+                            <option value="new_galaxygrab">New Galaxy Grab</option>
+                            <option value="new_powerofthor">New Power of thor</option>
+                            <option value="new_aviaturbo">New Aviaturbo</option>
                         </optgroup>
                     </select>
                 </div>
@@ -420,11 +425,27 @@
             new_keno: { slug: "keno", gameId: "58" },
             new_wheel: { slug: "wheel", gameId: "34" },
             new_roulette: { slug: "roulette", gameId: "71" },
+            new_aztecman: { slug: "aztecman", gameId: "1", fast: true, },
+            new_followthearrow: { slug: "followthearrow", gameId: "2", fast: true, },
+            new_galaxygrab: { slug: "galaxygrab", gameId: "3", fast: true, },
+            new_powerofthor: { slug: "powerofthor", gameId: "4", fast: true, },
+            new_aviaturbo: { slug: "aviaturbo", gameId: "54", fast: true, },
         };
 
+        function getNewGameUrl(newGame, env, params) {
+            if (newGame.fast) {
+                const gameEnv = newGame.testOnly ? 'test' : env;
+                return `https://game.exagaming.com/fast/${gameEnv}/${newGame.slug}/index.html?${params.toString()}`;
+            }
+            return `https://game.exagaming.com/originals/${env}/${newGame.slug}/index.html?${params.toString()}`;
+        }
+
         function syncNewGameState() {
-            const isNewGame = !!NEW_GAMES[document.getElementById('gameId').value];
+            const newGame = NEW_GAMES[document.getElementById('gameId').value];
             const envSelect = document.getElementById('env');
+            const testOnly = !!(newGame && newGame.testOnly);
+            if (testOnly) envSelect.value = 'test';
+            envSelect.disabled = testOnly;
         }
         document.getElementById('gameId').addEventListener('change', syncNewGameState);
         syncNewGameState();
@@ -453,7 +474,7 @@
                     username: username,
                     balance: Number(document.getElementById('loginBalance').value.trim()) || 0,
                     currencyCode: currency,
-                };
+                }; 
             }
             return {
                 username: username,
@@ -561,7 +582,7 @@
                         newParams.set('themeoperator', themeoperator);
                     }
                     const output = document.getElementById('urlOutput');
-                    output.textContent = `https://game.exagaming.com/originals/${env}/${newGame.slug}/index.html?${newParams.toString()}`;
+                    output.textContent = getNewGameUrl(newGame, env, newParams);
                     output.classList.remove('empty');
                     hideStatus('urlStatus');
                     return;
