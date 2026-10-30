@@ -225,43 +225,49 @@
                 <div class="form-group">
                     <label>Game ID</label>
                     <select id="gameId">
-                        <option value="1">1 - Aztec_Man</option>
-                        <option value="2">2 - FOLLOWTHEARROW</option>
-                        <option value="3">3 - GALAXY_GRAB</option>
-                        <option value="4">4 - POWEROFTHOR</option>
-                        <option value="30">30 - Plinko</option>
-                        <option value="33">33 - Blackjack</option>
-                        <option value="34" selected>34 - Wheel</option>
-                        <option value="54">54 - Aviator Turbo</option>
-                        <option value="56">56 - Limbo</option>
-                        <option value="57">57 - Dice</option>
-                        <option value="58">58 - Keno</option>
-                        <option value="70">70 - Crash</option>
-                        <option value="71">71 - Roulette</option>
-                        <option value="76">76 - Billionaire</option>
-                        <option value="89">89 - Run Chicken Run</option>
-                        <option value="90">90 - Chicken Original</option>
-                        <option value="93">93 - Blackjack 100</option>
-                        <option value="95">95 - Coinflip</option>
-                        <option value="96">96 - Scratch</option>
-                        <option value="100">100 - Lucky Dice (Dice)</option>
-                        <option value="101">101 - Lucky Crash (Crash)</option>
-                        <option value="102">102 - Roulette X (Roulette)</option>
-                        <option value="103">103 - Spin X (Wheel)</option>
-                        <optgroup label="New Games (Test only)">
-                            <option value="new_mines">New Mines</option>
-                            <option value="new_tower">New Tower</option>
-                            <option value="new_dice">New Dice</option>
-                            <option value="new_crash">New Crash</option>
-                            <option value="new_limbo">New Limbo</option>
-                            <option value="new_keno">New Keno</option>
-                            <option value="new_wheel">New Wheel</option>
-                            <option value="new_roulette">New Roulette</option>
-                            <option value="new_aztecman">New Aztec Man</option>
-                            <option value="new_followthearrow">New Follow the arrow</option>
-                            <option value="new_galaxygrab">New Galaxy Grab</option>
-                            <option value="new_powerofthor">New Power of thor</option>
-                            <option value="new_aviaturbo">New Aviaturbo</option>
+                        <optgroup label="Originals">
+                            <option value="30">30 - Plinko</option>
+                            <option value="new_mines">32 - Mines</option>
+                            <option value="33">33 - Blackjack</option>
+                            <option value="new_wheel" selected>34 - Wheel</option>
+                            <option value="new_tower">55 - Tower</option>
+                            <option value="new_limbo">56 - Limbo</option>
+                            <option value="new_dice">57 - Dice</option>
+                            <option value="new_keno">58 - Keno</option>
+                            <option value="new_crash">70 - Crash</option>
+                            <option value="new_roulette">71 - Roulette</option>
+                            <option value="76">76 - Billionaire</option>
+                            <option value="89">89 - Run Chicken Run</option>
+                            <option value="90">90 - Chicken Original</option>
+                            <option value="93">93 - Blackjack 100</option>
+                            <option value="95">95 - Coinflip</option>
+                            <option value="96">96 - Scratch</option>
+                            <option value="100">100 - Lucky Dice (Dice)</option>
+                            <option value="101">101 - Lucky Crash (Crash)</option>
+                            <option value="102">102 - Roulette X (Roulette)</option>
+                            <option value="103">103 - Spin X (Wheel)</option>
+                        </optgroup>
+                        <optgroup label="New Fast Games">
+                            <option value="new_aztecman">1 - Aztec Man</option>
+                            <option value="new_followthearrow">2 - Follow the Arrow</option>
+                            <option value="new_galaxygrab">3 - Galaxy Grab</option>
+                            <option value="new_powerofthor">4 - Power of Thor</option>
+                            <option value="new_aviaturbo">54 - Aviator Turbo</option>
+                        </optgroup>
+                        <optgroup label="Old Originals">
+                            <option value="34">34 - Wheel</option>
+                            <option value="56">56 - Limbo</option>
+                            <option value="57">57 - Dice</option>
+                            <option value="58">58 - Keno</option>
+                            <option value="70">70 - Crash</option>
+                            <option value="71">71 - Roulette</option>
+                        </optgroup>
+                        <optgroup label="Old Fast Games">
+                            <option value="1">1 - Aztec_Man</option>
+                            <option value="2">2 - FOLLOWTHEARROW</option>
+                            <option value="3">3 - GALAXY_GRAB</option>
+                            <option value="4">4 - POWEROFTHOR</option>
+                            <option value="54">54 - Aviator Turbo</option>
                         </optgroup>
                     </select>
                 </div>
@@ -305,6 +311,7 @@
                         <option value="10098">10098 - eurovirtual</option>
                         <option value="10100">10100 - crickso</option>
                         <option value="10116">10116 - herukul</option>
+                         <option value="3000">3000 - racebet</option>
                     </select>
                 </div>
             </div>
@@ -465,6 +472,16 @@
 
         function getLoginUrl() {
             return LOGIN_URLS[document.getElementById('loginServer').value] || LOGIN_URLS.playboo;
+        }
+
+        // Update-balance endpoints, following the Login Server dropdown
+        const UPDATE_BALANCE_URLS = {
+            playboo: 'https://casino.playboo.io/update-balance',
+            onestargame: 'https://casino.onestargame.com/update-balance',
+        };
+
+        function getUpdateBalanceUrl() {
+            return UPDATE_BALANCE_URLS[document.getElementById('loginServer').value] || UPDATE_BALANCE_URLS.playboo;
         }
 
         // onestargame expects { username, balance, currencyCode }; playboo expects { username, currencyCode, lang }
@@ -803,7 +820,7 @@
             showStatus('balanceStatus', 'Updating balance...', 'loading');
 
             try {
-                const response = await fetch('https://casino.playboo.io/update-balance', {
+                const response = await fetch(getUpdateBalanceUrl(), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
