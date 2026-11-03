@@ -93,6 +93,10 @@
             background: #16a34a;
             color: #fff;
         }
+        .btn-v2 {
+            background: #1564b4;
+            color: #fff;
+        }
         .btn-row {
             display: flex;
             gap: 10px;
@@ -349,6 +353,7 @@
             <label>Generated URL</label>
             <div class="url-output empty" id="urlOutput">Enter username and click "Generate URL"</div>
             <div class="actions">
+                <button class="btn-v2" id="launchApiV2Btn">Launch via Launch URL NEW</button>
                <button class="btn-fetch" id="launchApiBtn">Launch via Launch URL</button>
                 <button class="btn-primary" id="generateBtn">Generate URL</button>
                 <button class="btn-secondary" id="copyBtn">Copy URL</button>
@@ -665,20 +670,21 @@
             prod: 'https://api.exagaming.com/api/v1/game/launch',
         };
 
-        document.getElementById('launchApiBtn').addEventListener('click', async () => {
+        const LAUNCH_API_V2_URLS = {
+            test: 'https://api-test.ft76exa449849.com/api/v1/game/launch',
+            stage: 'https://api-stage.ft76exa449849.com/api/v1/game/launch',
+            prod: 'https://api.ft76exa449849.com/api/v1/game/launch',
+        };
+
+        async function launchViaApi(launchApiUrl) {
             const username = document.getElementById('username').value.trim();
-            const env = document.getElementById('env').value;
-            const gameId = document.getElementById('gameId').value;
+            const selectedGame = document.getElementById('gameId').value;
+            const gameId = NEW_GAMES[selectedGame] ? NEW_GAMES[selectedGame].gameId : selectedGame;
             const currency = document.getElementById('currency').value;
             const lang = document.getElementById('lang').value;
             const operator = document.getElementById('operator').value.trim();
             const themeoperator = document.getElementById('themeoperator').value;
             const isDemo = document.getElementById('isDemo').checked;
-
-            if (NEW_GAMES[gameId]) {
-                showStatus('urlStatus', 'Launch URL is not available for new games. Use "Generate URL".', 'error');
-                return;
-            }
 
             if (!username) {
                 showStatus('tokenStatus', 'Please enter a username', 'error');
@@ -726,7 +732,6 @@
                 }
 
                 // Step 2: Call game launch API
-                const launchApiUrl = LAUNCH_API_URLS[env] || LAUNCH_API_URLS.test;
                 const launchBody = {
                     operator: Number(operator),
                     gameId: Number(gameId),
@@ -771,6 +776,16 @@
                 console.error('Launch API error:', error);
                 showStatus('tokenStatus', 'Error: ' + error.message, 'error');
             }
+        }
+
+        document.getElementById('launchApiBtn').addEventListener('click', () => {
+            const env = document.getElementById('env').value;
+            launchViaApi(LAUNCH_API_URLS[env] || LAUNCH_API_URLS.test);
+        });
+
+        document.getElementById('launchApiV2Btn').addEventListener('click', () => {
+            const env = document.getElementById('env').value;
+            launchViaApi(LAUNCH_API_V2_URLS[env] || LAUNCH_API_V2_URLS.test);
         });
 
         document.getElementById('copyBtn').addEventListener('click', () => {
