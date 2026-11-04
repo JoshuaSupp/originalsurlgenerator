@@ -304,7 +304,7 @@
             <div class="row">
                 <div class="form-group">
                     <label>Operator</label>
-                    <input type="text" id="operator" value="1000" placeholder="e.g. 1000">
+                    <input type="text" id="operator" value="2000" placeholder="e.g. 2000">
                 </div>
                 <div class="form-group">
                     <label>Theme Operator (optional)</label>
@@ -333,8 +333,7 @@
                 <div class="form-group">
                     <label>Login Server</label>
                     <select id="loginServer">
-                        <option value="playboo" selected>casino.playboo.io</option>
-                        <option value="onestargame">casino.onestargame.com</option>
+                        <option value="exagaming" selected>casino.exagaming.com</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -471,50 +470,40 @@
 
         // Login endpoints selectable via the Login Server dropdown
         const LOGIN_URLS = {
-            playboo: 'https://casino.playboo.io/login',
-            onestargame: 'https://casino.onestargame.com/login',
+            exagaming: 'https://casino.exagaming.com/login',
         };
 
         function getLoginUrl() {
-            return LOGIN_URLS[document.getElementById('loginServer').value] || LOGIN_URLS.playboo;
+            return LOGIN_URLS[document.getElementById('loginServer').value] || LOGIN_URLS.exagaming;
         }
 
         // Update-balance endpoints, following the Login Server dropdown
         const UPDATE_BALANCE_URLS = {
-            playboo: 'https://casino.playboo.io/update-balance',
-            onestargame: 'https://casino.onestargame.com/update-balance',
+            exagaming: 'https://casino.exagaming.com/update-balance',
         };
 
         function getUpdateBalanceUrl() {
-            return UPDATE_BALANCE_URLS[document.getElementById('loginServer').value] || UPDATE_BALANCE_URLS.playboo;
+            return UPDATE_BALANCE_URLS[document.getElementById('loginServer').value] || UPDATE_BALANCE_URLS.exagaming;
         }
 
-        // onestargame expects { username, balance, currencyCode }; playboo expects { username, currencyCode, lang }
+        // exagaming expects { username, balance, currencyCode }
         function getLoginBody(username, currency, lang) {
-            if (document.getElementById('loginServer').value === 'onestargame') {
-                return {
-                    username: username,
-                    balance: Number(document.getElementById('loginBalance').value.trim()) || 0,
-                    currencyCode: currency,
-                }; 
-            }
             return {
                 username: username,
+                balance: Number(document.getElementById('loginBalance').value.trim()) || 0,
                 currencyCode: currency,
-                lang: lang,
             };
         }
 
         // Default operator per login server
         const LOGIN_OPERATORS = {
-            playboo: '1000',
-            onestargame: '2000',
+            exagaming: '2000',
         };
 
         function syncLoginServerState() {
             const server = document.getElementById('loginServer').value;
-            const isOnestar = server === 'onestargame';
-            document.getElementById('loginBalanceGroup').style.display = isOnestar ? '' : 'none';
+            const isExa = server === 'exagaming';
+            document.getElementById('loginBalanceGroup').style.display = isExa ? '' : 'none';
 
             // Swap operator to the server's default, unless the user typed a custom one
             const operatorInput = document.getElementById('operator');
